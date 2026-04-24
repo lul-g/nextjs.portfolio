@@ -2,14 +2,25 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  /*
+    Four fonts only:
+      • Outfit            → body / paragraphs               (font-sans, font-outfit)
+      • Instrument Serif  → section titles + emphasis spans (font-serif, font-instrument-serif, font-display, font-title)
+      • DM Mono "Core Mono" → eyebrows, badges, dates, links (font-mono, font-coremono)
+      • Bluu Next         → curated-work project titles      (font-bluu-next)
+  */
+  --font-sans: var(--font-outfit);
+  --font-mono: "DM Mono", ui-monospace, monospace;
+  --font-display: var(--font-instrument-serif);
+  --font-title: var(--font-instrument-serif);
+  --font-serif: var(--font-instrument-serif);
+  --font-bluu: "Bluu Next", var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-coremono: "DM Mono", ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,85 +57,679 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --color-canvas: var(--canvas);
+  --color-canvas-2: var(--canvas-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-text-soft: var(--text-soft);
+  --color-text-mute: var(--text-mute);
 }
 
+/*
+  Light mode (default).
+  Warm near-white canvas, dark text. Colored case-study cards stay saturated.
+*/
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /*
+    Cream canvas, white cards — paper-on-paper luxury magazine feel.
+    Warmth is whispered (L~97 with a kiss of yellow), not shouted.
+    White surfaces lift the cards off the page for that premium depth.
+  */
+  --canvas: #f7f3e8;
+  --canvas-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #efeadc;
+  --line: rgba(40, 30, 12, 0.08);
+  --text-soft: rgba(20, 18, 12, 0.78);
+  --text-mute: rgba(20, 18, 12, 0.55);
+
+  --background: var(--canvas);
+  --foreground: #0a0a0a;
+  --card: var(--surface);
+  --card-foreground: #0a0a0a;
+  --popover: var(--surface);
+  --popover-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #fafafa;
+  --secondary: var(--surface-2);
+  --secondary-foreground: #0a0a0a;
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-mute);
+  --accent: #0a0a0a;
+  --accent-foreground: #fafafa;
+  --destructive: #dc2626;
+  --border: var(--line);
+  --input: rgba(0, 0, 0, 0.08);
+  --ring: rgba(0, 0, 0, 0.25);
+  --chart-1: #0a0a0a;
+  --chart-2: #525252;
+  --chart-3: #60a5fa;
+  --chart-4: #a78bfa;
+  --chart-5: #f472b6;
+  --radius: 1rem;
+  --sidebar: var(--surface);
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #0a0a0a;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: var(--surface-2);
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: var(--line);
+  --sidebar-ring: rgba(0, 0, 0, 0.25);
 }
 
+/*
+  Dark mode.
+  Near-black canvas, soft white text. Applied via `.dark` class by next-themes.
+*/
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --canvas: #0e0e10;
+  --canvas-2: #1a1a1a;
+  --surface: #1a1a1a;
+  --surface-2: #222222;
+  --line: rgba(255, 255, 255, 0.07);
+  --text-soft: rgba(237, 237, 237, 0.78);
+  --text-mute: rgba(237, 237, 237, 0.55);
+
+  --background: var(--canvas);
+  --foreground: #ededed;
+  --card: var(--surface);
+  --card-foreground: #ededed;
+  --popover: var(--surface-2);
+  --popover-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #0a0a0a;
+  --secondary: var(--surface-2);
+  --secondary-foreground: #ededed;
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-mute);
+  --accent: #ededed;
+  --accent-foreground: #0a0a0a;
+  --destructive: #ef4444;
+  --border: var(--line);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: rgba(255, 255, 255, 0.25);
+  --sidebar: var(--surface);
+  --sidebar-foreground: #ededed;
+  --sidebar-primary: #ededed;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: var(--surface-2);
+  --sidebar-accent-foreground: #ededed;
+  --sidebar-border: var(--line);
+  --sidebar-ring: rgba(255, 255, 255, 0.25);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--canvas);
+    color: var(--foreground);
+  }
+  body {
+    @apply text-[0.9375rem] antialiased;
+    font-feature-settings: "ss01", "cv11";
   }
   html {
     @apply font-sans;
+    position: relative;
+  }
+  a,
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--foreground) 20%, transparent);
+    color: var(--foreground);
+  }
+}
+
+@layer components {
+  /* react-globe.gl: keep WebGL canvas square so the 3D sphere isn’t stretched. */
+  .arc-globe-host canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /*
+    Graded “rim” border: fine highlight on the leading edge, falling off into
+    deep charcoal—reads like light catching a bevel. Face gets a hair of top
+    inner highlight. Pairs with `LuminousFrame` (see components/luminous-frame.tsx).
+  */
+  .luminous-frame {
+    background: linear-gradient(
+      150deg,
+      color-mix(in oklch, #fff 24%, transparent) 0%,
+      color-mix(in oklch, #6b6b70 40%, #121214) 35%,
+      #0c0c0f 65%,
+      #030305 100%
+    );
+    box-shadow:
+      0 0 0 0.5px color-mix(in oklch, #000 70%, transparent),
+      0 18px 48px -20px color-mix(in oklch, #000 75%, transparent);
+  }
+  :root:not(.dark) .luminous-frame {
+    background: linear-gradient(
+      150deg,
+      color-mix(in oklch, #fff 55%, transparent) 0%,
+      color-mix(in oklch, #fff 6%, #d4d4d8) 45%,
+      #e2e2e4 100%
+    );
+    box-shadow:
+      0 0 0 0.5px color-mix(in oklch, #000 12%, transparent),
+      0 10px 36px -12px color-mix(in oklch, #000 18%, transparent);
+  }
+  .luminous-frame__face {
+    position: relative;
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklch, #fff 14%, transparent),
+      inset 0 0 0 1px color-mix(in oklch, #000 32%, transparent);
+  }
+  :root:not(.dark) .luminous-frame__face {
+    box-shadow:
+      inset 0 1px 0 0 #fff,
+      inset 0 0 0 1px color-mix(in oklch, #000 5%, transparent);
+  }
+  [data-luminous="sm"].luminous-frame {
+    box-shadow:
+      0 0 0 0.5px color-mix(in oklch, #fff 8%, transparent),
+      0 0 0 0.5px color-mix(in oklch, #000 55%, transparent),
+      0 10px 24px -12px color-mix(in oklch, #000 65%, transparent);
+  }
+  :root:not(.dark) [data-luminous="sm"].luminous-frame {
+    box-shadow:
+      0 0 0 0.5px color-mix(in oklch, #000 8%, transparent),
+      0 4px 14px -6px color-mix(in oklch, #000 14%, transparent);
+  }
+}
+
+@layer utilities {
+  /*
+    All title/display utilities map to Instrument Serif. Earlier code referenced
+    `font-display`, `font-title`, `font-curated-title`; they all collapse to the
+    same family so existing components don't need rewrites.
+  */
+  .font-display,
+  .font-title,
+  .font-curated-title,
+  .font-instrument-serif {
+    font-family: var(--font-instrument-serif), ui-serif, Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .font-outfit {
+    font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .font-bluu-next {
+    font-family: var(--font-bluu);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Requested as “Core Mono”; implemented with DM Mono (self-hosted). */
+  .font-coremono {
+    font-family: var(--font-coremono);
+  }
+
+  /*
+    “work” — ref: indigo → purple → hot pink → coral → orange (horizontal),
+    with a slow sweep so bright pink / purple / orange all read clearly.
+  */
+  .title-work-gradient {
+    position: relative;
+    display: inline;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-style: italic;
+    text-transform: lowercase;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    font-weight: 500;
+    background-image: linear-gradient(
+      90deg,
+      #3730a3 0%,
+      #6d28d9 10%,
+      #a855f7 22%,
+      #c026d3 36%,
+      #ff00cc 50%,
+      #ff4d6d 64%,
+      #ff6b35 78%,
+      #ff8c42 90%,
+      #ffb020 100%
+    );
+    background-size: 280% 100%;
+    background-position: 0% 50%;
+    animation: work-gradient-sweep 9s ease-in-out infinite;
+  }
+
+  @keyframes work-gradient-sweep {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .title-work-gradient {
+      animation: none;
+      background-size: 100% 100%;
+      background-position: 0% 50%;
+      background-image: linear-gradient(
+        90deg,
+        #6d28d9 0%,
+        #c026d3 30%,
+        #ff00cc 55%,
+        #ff8c42 100%
+      );
+    }
+  }
+
+  .font-serif-italic {
+    font-family: var(--font-instrument-serif), ui-serif, Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Subtle dotted grid background. */
+  .bg-dot-grid {
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--foreground) 10%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+  }
+
+  /* Hero soft glow — purple/blue wash behind the title in dark mode, pastel lavender in light. */
+  .hero-glow {
+    background:
+      radial-gradient(
+        60% 50% at 50% 20%,
+        color-mix(in oklch, #a78bfa 25%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        40% 35% at 60% 30%,
+        color-mix(in oklch, #60a5fa 20%, transparent),
+        transparent 70%
+      );
+  }
+
+  /* CTA footer wash — soft sky-blue watercolor in light, dark gradient in dark. */
+  .cta-wash {
+    background:
+      radial-gradient(
+        55% 40% at 20% 60%,
+        color-mix(in oklch, #7dd3fc 55%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        50% 45% at 80% 40%,
+        color-mix(in oklch, #c4b5fd 45%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        70% 60% at 50% 100%,
+        color-mix(in oklch, #a5f3fc 40%, transparent),
+        transparent 70%
+      );
+  }
+  .dark .cta-wash {
+    background:
+      radial-gradient(
+        55% 40% at 20% 60%,
+        color-mix(in oklch, #1e3a8a 60%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        50% 45% at 80% 40%,
+        color-mix(in oklch, #4c1d95 45%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        70% 60% at 50% 100%,
+        color-mix(in oklch, #0c4a6e 55%, transparent),
+        transparent 70%
+      );
+  }
+
+  /* Glassy surface for floating nav. */
+  .glass {
+    background: color-mix(in oklch, var(--canvas) 60%, transparent);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+  }
+
+  /*
+    Theme toggle: solid pill — no backdrop blur (frosted glass is reserved
+    for the morphing `nav` only, see `.nav-morph`).
+  */
+  .nav-shell {
+    background-color: var(--canvas-2);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+      0 4px 20px -8px rgba(0, 0, 0, 0.12);
+    border-radius: 9999px;
+  }
+  .dark .nav-shell {
+    background-color: color-mix(in oklch, var(--canvas-2) 92%, #0a0a0c);
+    background-image: radial-gradient(
+      100% 120% at 50% 0%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 65%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 4px 24px -8px rgba(0, 0, 0, 0.45);
+  }
+
+  /*
+    Morphing nav: width only (no border-radius animation; fixed 20px r).
+    One stacked `background` (warm base + white frost) — do not set a
+    separate `background-color`; it was fighting the gradient and washing
+    out the cream canvas. Blur + translucent layers = actual frosted glass.
+  */
+  .nav-morph {
+    /* Bottom = `var(--canvas)` paper at ~1/2 opacity, top = white frost.
+       Literal RGB matches :root #f7f3e8 so we never mix with “transparent black”. */
+    pointer-events: auto;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.7) 0%,
+        rgba(255, 255, 255, 0.35) 100%
+      ),
+      rgba(247, 243, 232, 0.48);
+    border: 1px solid rgba(12, 10, 6, 0.1);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 10px 40px -14px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(40px) saturate(1.7);
+    -webkit-backdrop-filter: blur(40px) saturate(1.7);
+    border-radius: 20px;
+    /* `clip` + margin keeps the active-link “lamp” able to paint outside. */
+    overflow: clip;
+    overflow-clip-margin: 36px;
+    transition:
+      width 720ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dark .nav-morph {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.11) 0%,
+        rgba(22, 22, 26, 0.42) 45%,
+        rgba(4, 4, 6, 0.55) 100%
+      ),
+      rgba(6, 7, 10, 0.48);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 8px 44px -10px rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(48px) saturate(1.9);
+    -webkit-backdrop-filter: blur(48px) saturate(1.9);
+  }
+
+  :root:not(.dark) .nav-morph:has([data-more-zone]:hover),
+  :root:not(.dark) .nav-morph:has([data-more-zone]:focus-within) {
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      0 20px 48px -18px rgba(0, 0, 0, 0.18);
+  }
+  .dark .nav-morph:has([data-more-zone]:hover),
+  .dark .nav-morph:has([data-more-zone]:focus-within) {
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 24px 60px -20px rgba(0, 0, 0, 0.75);
+  }
+
+  /* Drawer row — height + fade synchronized with nav-morph width. */
+  .nav-drawer {
+    transition:
+      grid-template-rows 720ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /*
+    Hover bridge — the nav's top row has bottom padding that sits
+    between the "More" chip and the drawer. Without a bridge the
+    cursor passes through that dead zone, :has(:hover) briefly sees
+    no data-more-zone, and the nav collapses. This ::after extends
+    the More chip's hit area downward so the hover state is
+    continuous as the cursor moves into the drawer.
+  */
+  .nav-morph li[data-more-zone] {
+    position: relative;
+  }
+  .nav-morph li[data-more-zone]::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: -8px;
+    right: -8px;
+    height: 16px;
+  }
+
+  /*
+    Per-item reveal used on each tile / row inside the drawer.
+    Items start shifted left + faded, and slide into place in
+    sequence (left-to-right) once the drawer is open. Each element
+    owns its own transition-delay via an inline style so the stagger
+    is easy to tune without writing nth-child rules.
+
+    On close the parent :has() selector stops matching, the delay
+    returns to 0, and all items fade out together — feels snappier
+    than a reverse stagger.
+  */
+  .nav-reveal {
+    opacity: 0;
+    transition:
+      opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 0ms;
+  }
+  .nav-reveal-x {
+    transform: translateX(-14px);
+  }
+  .nav-reveal-y {
+    transform: translateY(-14px);
+  }
+  .nav-morph:has([data-more-zone]:hover) .nav-reveal,
+  .nav-morph:has([data-more-zone]:focus-within) .nav-reveal {
+    opacity: 1;
+    transform: translate(0, 0);
+    transition-delay: var(--reveal-delay, 280ms);
+  }
+
+  /*
+    Each link row inside the More drawer sits on its own soft,
+    rounded surface — a hair lighter than the navbar material so
+    the rows read as distinct cards without feeling heavy.
+  */
+  .nav-row {
+    background-color: rgba(0, 0, 0, 0.035);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+    transition:
+      background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-row:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+  }
+  .dark .nav-row {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  }
+  .dark .nav-row:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      0 4px 18px -6px rgba(255, 255, 255, 0.06);
+  }
+
+  .nav-row-icon {
+    background-color: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition:
+      background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .dark .nav-row-icon {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .nav-row:hover .nav-row-icon {
+    background-color: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.14);
+  }
+  .dark .nav-row:hover .nav-row-icon {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /*
+    Active-link: a solid, rounded pill under the selected route,
+    crowned by a small dome "lamp" mounted on its top edge.
+  */
+  .nav-active {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.08);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
+  }
+  .dark .nav-active {
+    background-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /*
+    Dome lamp sitting on top of the navbar, outside it.
+    With the chip 4px below the navbar's top edge (p-1) and the lamp
+    5px tall, offsetting top by -9px places the flat bottom of the
+    lamp flush with the navbar's top and the rounded top of the lamp
+    5px above the navbar, fully outside the shell.
+  */
+  .nav-active::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 55%;
+    min-width: 34px;
+    height: 5px;
+    transform: translateX(-50%);
+    border-radius: 999px 999px 0 0;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+  }
+  .dark .nav-active::before {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.5);
+  }
+
+
+  /* Marquee animation for tech stack + testimonials + OPEN TO WORK strip. */
+  @keyframes marquee-x {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .animate-marquee {
+    animation: marquee-x 56s linear infinite;
+  }
+  .animate-marquee-slow {
+    animation: marquee-x 110s linear infinite;
+  }
+  .animate-marquee-fast {
+    animation: marquee-x 35s linear infinite;
+  }
+  .pause-on-hover:hover .animate-marquee,
+  .pause-on-hover:hover .animate-marquee-slow,
+  .pause-on-hover:hover .animate-marquee-fast {
+    animation-play-state: paused;
+  }
+
+  @keyframes tz-sweep-rotate {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+  @keyframes tz-breathe {
+    0%,
+    100% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  .animate-tz-sweep {
+    animation: tz-sweep-rotate 14s linear infinite;
+  }
+  .animate-tz-breathe {
+    animation: tz-breathe 2.5s ease-in-out infinite;
+  }
+
+  /* Utility hook kept for future use. Hover lift intentionally disabled —
+     bento tiles stay put when hovered. */
+  .card-lift {
+    transition: box-shadow 0.6s;
+  }
+
+  /* Noise texture overlay used on gradient case-study cards. */
+  .noise {
+    position: relative;
+    isolation: isolate;
+  }
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    border-radius: inherit;
   }
 }
